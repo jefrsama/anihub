@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'register_page.dart'; // Импорт страницы регистрации
+import 'register_page.dart'; 
 import 'forgot_login_page.dart'; 
 
 class LoginPage extends StatelessWidget {
@@ -82,7 +82,7 @@ class LoginPage extends StatelessWidget {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => ForgotLoginPage()), // Перенаправление на страницу ForgotLoginPage
+                            MaterialPageRoute(builder: (context) => ForgotLoginPage()), // Перенос на ForgotLoginPage
                           );
                         },
                         child: Text(
@@ -94,7 +94,7 @@ class LoginPage extends StatelessWidget {
                     SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
-                        // Обработка нажатия кнопки
+                        // Добавить логику
                       },
                       child: Text(
                         'ВОЙТИ',

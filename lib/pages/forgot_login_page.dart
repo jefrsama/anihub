@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'register_page.dart'; // Импортируйте страницу регистрации
+import 'register_page.dart'; 
 
 class ForgotLoginPage extends StatelessWidget {
   const ForgotLoginPage({Key? key}) : super(key: key);
@@ -66,7 +66,7 @@ class ForgotLoginPage extends StatelessWidget {
                     SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
-                        // Обработка нажатия кнопки
+                        // Добавить логику
                       },
                       child: Text(
                         'ВЫСЛАТЬ',

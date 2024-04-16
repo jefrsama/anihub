@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart'; // Импорт страницы входа
+import 'login_page.dart'; 
 import 'package:flutter_svg/flutter_svg.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -116,7 +116,7 @@ class RegisterPage extends StatelessWidget {
                     SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
-                        // Обработка нажатия кнопки регистрации
+                        // Добавить логику
                       },
                       child: Text(
                         'ЗАРЕГИСТРИРОВАТЬСЯ',
