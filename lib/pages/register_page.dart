@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'register_page.dart'; // Импорт страницы регистрации
-import 'forgot_login_page.dart'; 
+import 'login_page.dart'; // Импорт страницы входа
+import 'package:flutter_svg/flutter_svg.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class RegisterPage extends StatelessWidget {
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -48,18 +48,42 @@ class LoginPage extends StatelessWidget {
                     SizedBox(height: 189), 
                     Center(
                       child: Text(
-                      "Авторизация",
-                      style: TextStyle(fontSize: 32, color: Color.fromARGB(255, 255, 255, 255))),
+                        "Регистрация",
+                        style: TextStyle(fontSize: 32, color: Color.fromARGB(255, 255, 255, 255)),
+                      ),
                     ),
                     SizedBox(height: 40), 
                     TextField(
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.black,
-                        labelText: 'Username или email',
+                        labelText: 'Username',
                         labelStyle: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    TextField(
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.black,
+                        labelText: 'Email',
+                        labelStyle: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: SvgPicture.string(
+                              '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>''',
+                              color: Colors.grey,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -76,28 +100,26 @@ class LoginPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ForgotLoginPage()), // Перенаправление на страницу ForgotLoginPage
-                          );
-                        },
-                        child: Text(
-                          'Забыли пароль?',
-                          style: TextStyle(color: Color.fromRGBO(115, 153, 250, 1)),
+                    SizedBox(height: 16),
+                    TextField(
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.black,
+                        labelText: 'Повторите пароль',
+                        labelStyle: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
                     SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
-                        // Обработка нажатия кнопки
+                        // Обработка нажатия кнопки регистрации
                       },
                       child: Text(
-                        'ВОЙТИ',
+                        'ЗАРЕГИСТРИРОВАТЬСЯ',
                         style: TextStyle(color: Colors.white),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -110,7 +132,7 @@ class LoginPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Нет аккаунта?',
+                          'Уже есть аккаунт? ',
                           style: TextStyle(
                             color: Colors.white,
                           ),
@@ -119,11 +141,11 @@ class LoginPage extends StatelessWidget {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => RegisterPage()),
+                              MaterialPageRoute(builder: (context) => LoginPage()),
                             );
                           },
                           child: Text(
-                            'Создайте новый аккаунт!',
+                            'Войти',
                             style: TextStyle(
                               decoration: TextDecoration.underline,
                               color: Color.fromRGBO(115, 153, 250, 1),
