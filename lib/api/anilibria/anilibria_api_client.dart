@@ -1,3 +1,11 @@
+import 'dart:async';
+
+import 'package:anihub/api/anilibria/models/title.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'models/pagination_list.dart';
+
 abstract class AAnilibriaApiClient {
   /*
   GET title – Получить информацию о тайтле
@@ -18,8 +26,93 @@ GET torrent/seed_stats – Возвращает список пользоват�
 GET torrent/rss – Возвращает список обновлений на сайте в одном из форматов RSS ленты
 GET franchise/list – Возвращает список всех франшиз
    */
+   Future<Title?> getTitle({int? id, String? code});
+   Future<List<Title>?> getTitleList({int? id, String? code});
+   Future<PaginationList> getUpdates({String? filter, String? remove, int? limit, int? since, String? descriptionType, String? playlistType, int? after, int? page, int? itemsPerPage});
 }
 
-class AnilibriaApiClient {
-  String baseUrl = "https://api.anilibria.tv/v3/";
+class AnilibriaApiClient extends AAnilibriaApiClient {
+  String baseUrl = "https://api.anilibria.tv/v3";
+
+  @override
+  Future<Title?> getTitle({id, code}) async {
+    var queryParameters = <String, String>{};
+    if (id != null) {
+      queryParameters['id'] = id.toString();
+    }
+    if (code != null) {
+      queryParameters['code'] = code;
+    }
+    var url = Uri.parse('$baseUrl/title').replace(queryParameters: queryParameters);
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      return Future.value(Title.fromJson(jsonDecode(response.body)));
+    } else {
+      return null;
+    }
+
+  }
+  
+  @override
+  Future<List<Title>?> getTitleList({int? id, String? code}) async {
+    var queryParameters = <String, String>{};
+    if (id != null) {
+      queryParameters['id'] = id.toString();
+    }
+    if (code != null) {
+      queryParameters['code'] = code;
+    }
+    var url = Uri.parse('$baseUrl/title/list').replace(queryParameters: queryParameters);
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      return Future.value((jsonDecode(response.body) as List<Map<String, dynamic>>).map((e) => Title.fromJson(e)).toList());
+    } else {
+      return null;
+    }
+  }
+  
+  @override
+  Future<PaginationList> getUpdates({String? filter, String? remove, int? limit, int? since, String? descriptionType, String? playlistType, int? after, int? page, int? itemsPerPage}) async {
+    var queryParameters = <String, String>{};
+    if (filter != null) {
+      queryParameters['filter'] = filter;
+    }
+    if (remove != null) {
+      queryParameters['remove'] = remove;
+    }
+    if (limit != null) {
+      queryParameters['limit'] = limit.toString();
+    }
+    if (since != null) {
+      queryParameters['since'] = since.toString();
+    }
+    if (descriptionType != null) {
+      queryParameters['description_type'] = descriptionType;
+    }
+    if (remove != null) {
+      queryParameters['remove'] = remove;
+    }
+    if (playlistType != null) {
+      queryParameters['playlist_type'] = playlistType;
+    }
+    if (after != null) {
+      queryParameters['after'] = after.toString();
+    }
+    if (page != null) {
+      queryParameters['page'] = page.toString();
+    }
+    if (itemsPerPage != null) {
+      queryParameters['items_per_page'] = itemsPerPage.toString();
+    }
+    var url = Uri.parse('$baseUrl/title/updates').replace(queryParameters: queryParameters);
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      return Future.value(PaginationList.fromJson(jsonDecode(response.body)));
+    } else {
+      return PaginationList(
+        list: List.empty(),
+        pagination: Pagination(currentPage: 0, itemsPerPage: 0, pages: 0, totalItems: 0)
+      );
+    }
+  }
 }
