@@ -8,10 +8,10 @@ import 'models/pagination_list.dart';
 
 abstract class AAnilibriaApiClient {
   /*
-  GET title – Получить информацию о тайтле
-GET title/list – Получить информацию о нескольких тайтлах сразу
-GET title/updates – Список тайтлов, отсортированные по времени добавления нового релиза
-GET title/changes – Список тайтлов, отсортированные по времени изменения
+  GET title – 
+GET title/list – 
+GET title/updates – 
+GET title/changes – 
 GET title/schedule – Расписание выхода тайтлов, отсортированное по дням недели
 GET title/random – Возвращает случайный тайтл из базы
 GET title/search – Возвращает список найденных по фильтрам тайтлов
@@ -26,16 +26,46 @@ GET torrent/seed_stats – Возвращает список пользоват�
 GET torrent/rss – Возвращает список обновлений на сайте в одном из форматов RSS ленты
 GET franchise/list – Возвращает список всех франшиз
    */
-   Future<Title?> getTitle({int? id, String? code});
-   Future<List<Title>?> getTitleList({int? id, String? code});
-   Future<PaginationList> getUpdates({String? filter, String? remove, int? limit, int? since, String? descriptionType, String? playlistType, int? after, int? page, int? itemsPerPage});
+  /// Get information about the title
+  /// * [id] - Title ID
+  /// * [code] - Title code
+  /// * [torrentId] - ID of the torrent file
+  /// * [filter] - List of values that will be in the response
+  /// * [remove] - List of values that will be removed from the response
+  /// * [include] - List of file types that will be returned as a base64 string. [More...](https://github.com/anilibria/docs/blob/master/api_v3.md#include)
+  /// * [descriptionType] - Type of description received. [More...](https://github.com/anilibria/docs/blob/master/api_v3.md#description_type)
+  /// * [playlistType] - Format of the resulting list of series, `object` or `array`. Default is `object`
+  Future<Title?> getTitle({int? id, String? code, int? torrentId, String? filter, String? remove, String? include, String? descriptionType, String? playlistType});
+  
+  /// Get information about several titles at once
+  /// * [idList] - List of title IDs
+  /// * [codeList] - List of title codes
+  /// * [filter] - List of values that will be in the response
+  /// * [remove] - List of values that will be removed from the response
+  /// * [include] - List of file types that will be returned as a base64 string. [More...](https://github.com/anilibria/docs/blob/master/api_v3.md#include)
+  /// * [descriptionType] - Type of description received. [More...](https://github.com/anilibria/docs/blob/master/api_v3.md#description_type)
+  /// * [playlistType] - Format of the resulting list of series, `object` or `array`.  Default is `object`
+  /// * [page] - Page number
+  /// * [itemsPerPage] - Number of elements on the page
+  /// 
+  /// In the `filter` and `remove` parameters, you can specify the full path to the key that you want to keep or remove, for example: `names.alternative` or `team.voice[0]`. Since version 2.8 it became possible to get the values of one key in all objects in an array, for example: `torrents.list[*].torrent_id`
+  Future<List<Title>?> getTitles({List<int>? idList, List<String>? codeList, List<int>? torrentIdList, String? filter, String? remove, String? include, String? descriptionType, String? playlistType, int? page, int? itemsPerPage});
+  /// Список тайтлов, отсортированные по времени изменения
+  Future<PaginationList> getChanges({String? filter, String? remove, String? include, int? limit,  int? since, String? playlistType, int? after, int? page, int? itemsPerPage});
+  /// Список тайтлов, отсортированные по времени добавления нового релиза
+  Future<PaginationList> getUpdates({String? filter, String? remove, String? include, int? limit, int? since, String? descriptionType, String? playlistType, int? after, int? page, int? itemsPerPage});
+
+  Future getSchedule();
+  Future getRandomTitle();
+  Future getYears();
+  Future getGenres();
+  Future searchTitles();
 }
 
 class AnilibriaApiClient extends AAnilibriaApiClient {
   String baseUrl = "https://api.anilibria.tv/v3";
 
-  @override
-  Future<Title?> getTitle({id, code}) async {
+/*
     var queryParameters = <String, String>{};
     if (id != null) {
       queryParameters['id'] = id.toString();
@@ -50,29 +80,10 @@ class AnilibriaApiClient extends AAnilibriaApiClient {
     } else {
       return null;
     }
-
-  }
+ */
   
   @override
-  Future<List<Title>?> getTitleList({int? id, String? code}) async {
-    var queryParameters = <String, String>{};
-    if (id != null) {
-      queryParameters['id'] = id.toString();
-    }
-    if (code != null) {
-      queryParameters['code'] = code;
-    }
-    var url = Uri.parse('$baseUrl/title/list').replace(queryParameters: queryParameters);
-    var response = await http.get(url);
-    if (response.statusCode == 200) {
-      return Future.value((jsonDecode(response.body) as List<Map<String, dynamic>>).map((e) => Title.fromJson(e)).toList());
-    } else {
-      return null;
-    }
-  }
-  
-  @override
-  Future<PaginationList> getUpdates({String? filter, String? remove, int? limit, int? since, String? descriptionType, String? playlistType, int? after, int? page, int? itemsPerPage}) async {
+  Future<PaginationList> getUpdates({String? filter, String? remove, String? include, int? limit, int? since, String? descriptionType, String? playlistType, int? after, int? page, int? itemsPerPage}) async {
     var queryParameters = <String, String>{};
     if (filter != null) {
       queryParameters['filter'] = filter;
@@ -91,6 +102,9 @@ class AnilibriaApiClient extends AAnilibriaApiClient {
     }
     if (remove != null) {
       queryParameters['remove'] = remove;
+    }
+    if (include != null) {
+      queryParameters['include'] = include;
     }
     if (playlistType != null) {
       queryParameters['playlist_type'] = playlistType;
@@ -114,5 +128,53 @@ class AnilibriaApiClient extends AAnilibriaApiClient {
         pagination: Pagination(currentPage: 0, itemsPerPage: 0, pages: 0, totalItems: 0)
       );
     }
+  }
+  
+  @override
+  Future<PaginationList> getChanges({String? filter, String? remove, String? include, int? limit, int? since, String? playlistType, int? after, int? page, int? itemsPerPage}) {
+    // TODO: implement getChanges
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future getGenres() {
+    // TODO: implement getGenres
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future getRandomTitle() {
+    // TODO: implement getRandomTitle
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future getSchedule() {
+    // TODO: implement getSchedule
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<Title?> getTitle({int? id, String? code, int? torrentId, String? filter, String? remove, String? include, String? descriptionType, String? playlistType}) {
+    // TODO: implement getTitle
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<List<Title>?> getTitles({List<int>? idList, List<String>? codeList, List<int>? torrentIdList, String? filter, String? remove, String? include, String? descriptionType, String? playlistType, int? page, int? itemsPerPage}) {
+    // TODO: implement getTitles
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future getYears() {
+    // TODO: implement getYears
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future searchTitles() {
+    // TODO: implement searchTitles
+    throw UnimplementedError();
   }
 }

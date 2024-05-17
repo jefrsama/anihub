@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import '../api/anilibria/anilibria_api_client.dart';
 import '../database/db_helper.dart';
 import '../database/anime_model.dart';
 
@@ -26,6 +29,13 @@ class _AnimePageState extends State<AnimePage> {
 
   @override
   Widget build(BuildContext context) {
+    var client = AnilibriaApiClient();
+    client.getUpdates().then((value) => {
+      for(var title in value.list) {
+        log(title.names?.ru ?? "None")
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Anime CRUD'),
