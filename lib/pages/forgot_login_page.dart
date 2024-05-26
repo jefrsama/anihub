@@ -1,8 +1,27 @@
 import 'package:flutter/material.dart';
 import 'register_page.dart'; 
 
-class ForgotLoginPage extends StatelessWidget {
+class ForgotLoginPage extends StatefulWidget {
   const ForgotLoginPage({Key? key}) : super(key: key);
+
+  @override
+  _ForgotLoginPageState createState() => _ForgotLoginPageState();
+}
+
+class _ForgotLoginPageState extends State<ForgotLoginPage> {
+  int _themeIndex = 0; //index to track theme
+
+  final List<List<Color>> _colorThemes = [
+    [Color(0xFF212124), Color.fromARGB(255, 33, 36, 33), Color(0x00F1B7B7), Color(0x66000000), Color(0x00F742AF), Color(0x66000000)],
+    [Colors.pink[100]!, Colors.orange[200]!, Colors.pink[100]!, Colors.pink[100]!, Colors.pink[100]!, Colors.pink[100]!],
+    [Colors.deepOrange[200]!, Colors.amber[200]!, Colors.deepOrange[200]!, Colors.deepOrange[200]!, Colors.deepOrange[200]!, Colors.deepOrange[200]!],
+  ];
+
+  void _changeTheme() {
+    setState(() {
+      _themeIndex = (_themeIndex + 1) % _colorThemes.length; // Cycle themes
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -10,30 +29,30 @@ class ForgotLoginPage extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xFF212124), Color(0xFF212124)],
+                colors: [_colorThemes[_themeIndex][0], _colorThemes[_themeIndex][1]],
               ),
             ),
           ),
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
-                colors: [Color(0x00F1B7B7), Color(0x66000000)],
+                colors: [_colorThemes[_themeIndex][2], _colorThemes[_themeIndex][3]],
                 stops: [0.7095, 1.7123],
               ),
             ),
           ),
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.bottomLeft,
                 end: Alignment.topRight,
-                colors: [Color(0x00F742AF), Color(0x66000000)],
+                colors: [_colorThemes[_themeIndex][4], _colorThemes[_themeIndex][5]],
                 stops: [0.7814, 1.2221],
               ),
             ),
@@ -111,6 +130,12 @@ class ForgotLoginPage extends StatelessWidget {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _changeTheme,
+        tooltip: 'Change Theme',
+        child: Icon(Icons.color_lens),
+      ),
     );
   }
 }
+    
