@@ -1,21 +1,52 @@
+import 'package:anihub/generated/l10n.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
-//import 'package:anihub/pages/anime_page.dart';
-import 'package:anihub/pages/login_page.dart';
+import 'package:provider/provider.dart';
+import 'package:anihub/theme/theme_provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => LocaleProvider()),
+      ],
+      child: MyApp(),
+    ),
+  );
+}
+
+class LocaleProvider extends ChangeNotifier {
+  Locale _locale = Locale('en');
+
+  Locale get locale => _locale;
+
+  void setLocale(Locale locale) {
+    if (_locale != locale) {
+      _locale = locale;
+      notifyListeners();
+    }
+  }
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final localeProvider = Provider.of<LocaleProvider>(context);
+
     return MaterialApp(
       title: 'Anime Hub',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MainPage(),
+      theme: themeProvider.themeData,
+      home: MainPage(),                   //starting page
+      locale: localeProvider.locale,
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
     );
   }
 }
@@ -23,6 +54,8 @@ class MyApp extends StatelessWidget {
 class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final localeProvider = Provider.of<LocaleProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Main'),
@@ -31,16 +64,47 @@ class MainPage extends StatelessWidget {
             icon: Icon(Icons.search),
             onPressed: () {},
           ),
+          IconButton(
+            icon: Icon(Icons.color_lens),
+            onPressed: () {
+              var themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+              themeProvider.toggleTheme();
+            },
+          ),
+          DropdownButton<Locale>(
+            value: localeProvider.locale,
+            icon: Icon(Icons.language, color: Colors.grey),
+            dropdownColor: const Color.fromARGB(255, 30, 30, 30),
+            onChanged: (Locale? newLocale) {
+              if (newLocale != null) {
+                localeProvider.setLocale(newLocale);
+              }
+            },
+            items: [
+              DropdownMenuItem(
+                value: Locale('en'),
+                child: Text('English', style: TextStyle(color: Colors.grey)),
+              ),
+              DropdownMenuItem(
+                value: Locale('ru'),
+                child: Text('Russian', style: TextStyle(color: Colors.grey)),
+              ),
+              DropdownMenuItem(
+                value: Locale('kk'),
+                child: Text('Kazakh', style: TextStyle(color: Colors.grey)),
+              ),
+            ],
+          ),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildSectionTitle(context, 'HOT'),
+            _buildSectionTitle(context, S.of(context).hot),
             _buildHotSection(),
-            _buildSectionTitle(context, 'WHAT\'S NEW'),
+            _buildSectionTitle(context, S.of(context).whatsNew),
             _buildWhatsNewSection(),
-            _buildSectionTitle(context, 'NEW RELEASES'),
+            _buildSectionTitle(context, S.of(context).newReleases),
             _buildNewReleasesSection(),
           ],
         ),
