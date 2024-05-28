@@ -79,6 +79,16 @@ class S {
       args: [],
     );
   }
+
+  /// `User`
+  String get userProfileName {
+    return Intl.message(
+      'User',
+      name: 'userProfileName',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

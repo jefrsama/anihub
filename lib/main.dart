@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:anihub/theme/theme_provider.dart';
+import 'package:anihub/pages/login_page.dart';
 
 void main() {
   runApp(
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Anime Hub',
       theme: themeProvider.themeData,
-      home: MainPage(),                   //starting page
+      home: MainPage(),
       locale: localeProvider.locale,
       localizationsDelegates: const [
         S.delegate,
@@ -54,8 +55,6 @@ class MyApp extends StatelessWidget {
 class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final localeProvider = Provider.of<LocaleProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Main'),
@@ -64,39 +63,19 @@ class MainPage extends StatelessWidget {
             icon: Icon(Icons.search),
             onPressed: () {},
           ),
-          IconButton(
-            icon: Icon(Icons.color_lens),
-            onPressed: () {
-              var themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-              themeProvider.toggleTheme();
+          Builder(
+            builder: (context) {
+              return IconButton(
+                icon: Icon(Icons.menu),
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+              );
             },
-          ),
-          DropdownButton<Locale>(
-            value: localeProvider.locale,
-            icon: Icon(Icons.language, color: Colors.grey),
-            dropdownColor: const Color.fromARGB(255, 30, 30, 30),
-            onChanged: (Locale? newLocale) {
-              if (newLocale != null) {
-                localeProvider.setLocale(newLocale);
-              }
-            },
-            items: [
-              DropdownMenuItem(
-                value: Locale('en'),
-                child: Text('English', style: TextStyle(color: Colors.grey)),
-              ),
-              DropdownMenuItem(
-                value: Locale('ru'),
-                child: Text('Russian', style: TextStyle(color: Colors.grey)),
-              ),
-              DropdownMenuItem(
-                value: Locale('kk'),
-                child: Text('Kazakh', style: TextStyle(color: Colors.grey)),
-              ),
-            ],
           ),
         ],
       ),
+      endDrawer: _buildEndDrawer(context),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -108,6 +87,79 @@ class MainPage extends StatelessWidget {
             _buildNewReleasesSection(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildEndDrawer(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
+
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                ),
+                SizedBox(height: 10),
+                Text(
+                  S.of(context).userProfileName,    //mock username for now (changes on language)
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ],
+            ),
+          ),
+          ListTile(
+            leading: Icon(Icons.login),
+            title: Text('Login'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.color_lens),
+            title: Text('Toggle Theme'),
+            onTap: () {
+              themeProvider.toggleTheme();
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.language),
+            title: Text('Change Language'),
+            trailing: DropdownButton<Locale>(
+              value: localeProvider.locale,
+              icon: Icon(Icons.arrow_drop_down),
+              onChanged: (Locale? newLocale) {
+                if (newLocale != null) {
+                  localeProvider.setLocale(newLocale);
+                }
+              },
+              items: [
+                DropdownMenuItem(
+                  value: Locale('en'),
+                  child: Text('English'),
+                ),
+                DropdownMenuItem(
+                  value: Locale('ru'),
+                  child: Text('Russian'),
+                ),
+                DropdownMenuItem(
+                  value: Locale('kk'),
+                  child: Text('Kazakh'),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

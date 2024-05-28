@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "hot": MessageLookupByLibrary.simpleMessage("ЫСТЫҚ"),
         "newReleases":
             MessageLookupByLibrary.simpleMessage("ЖАҢА ШЫҒАРЫЛЫМДАР"),
+        "userProfileName": MessageLookupByLibrary.simpleMessage("Пайдаланушы"),
         "whatsNew": MessageLookupByLibrary.simpleMessage("НЕ ЖАҢАЛЫҚ")
       };
 }
