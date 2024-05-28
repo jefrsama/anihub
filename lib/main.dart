@@ -1,11 +1,18 @@
+import 'package:anihub/firebase_options.dart';
 import 'package:anihub/generated/l10n.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:anihub/theme/theme_provider.dart';
 import 'package:anihub/pages/login_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: FirebaseOptions(apiKey: 'AIzaSyDFSPtzJLqCk-R7lojjRdqT523p9N7vkkE', appId: '1:15978137406:android:e47baf1974fc20b3aa8e6f', messagingSenderId: '15978137406', projectId: 'anihub-d83a6'),
+  );
+
   runApp(
     MultiProvider(
       providers: [

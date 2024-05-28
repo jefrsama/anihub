@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'register_page.dart';
 import 'forgot_login_page.dart';
+import 'auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';  // Добавлен импорт
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -10,18 +12,20 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  int _themeIndex = 0; //index to track theme
+  final AuthService _authService = AuthService();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  int _themeIndex = 0;
 
-  // colors to choose
   final List<List<Color>> _colorThemes = [
-    [Color(0xFF212124), Color.fromARGB(255, 33, 36, 33), Color(0x00F1B7B7), Color(0x66000000), Color(0x00F742AF), Color(0x66000000)],
-    [Colors.pink[100]!, Colors.orange[200]!, Colors.pink[100]!, Colors.pink[100]!, Colors.pink[100]!, Colors.pink[100]!],
-    [Colors.deepOrange[200]!, Colors.amber[200]!, Colors.deepOrange[200]!, Colors.deepOrange[200]!, Colors.deepOrange[200]!, Colors.deepOrange[200]!],
+    [Color(0xFF212124), Color.fromARGB(255, 33, 36, 33)],
+    [Colors.pink[100]!, Colors.orange[200]!],
+    [Colors.deepOrange[200]!, Colors.amber[200]!],
   ];
 
   void _changeTheme() {
     setState(() {
-      _themeIndex = (_themeIndex + 1) % _colorThemes.length; // Cycle themes
+      _themeIndex = (_themeIndex + 1) % _colorThemes.length;
     });
   }
 
@@ -36,26 +40,6 @@ class _LoginPageState extends State<LoginPage> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [_colorThemes[_themeIndex][0], _colorThemes[_themeIndex][1]],
-              ),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [_colorThemes[_themeIndex][2], _colorThemes[_themeIndex][3]],
-                stops: [0.7095, 1.7123],
-              ),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [_colorThemes[_themeIndex][4], _colorThemes[_themeIndex][5]],
-                stops: [0.7814, 1.2221],
               ),
             ),
           ),
@@ -74,6 +58,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     SizedBox(height: 40),
                     TextField(
+                      controller: _emailController,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: _colorThemes[_themeIndex][1],
@@ -86,6 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     SizedBox(height: 16),
                     TextField(
+                      controller: _passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
                         filled: true,
@@ -103,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => ForgotLoginPage()), // Перенос на ForgotLoginPage
+                            MaterialPageRoute(builder: (context) => ForgotLoginPage()),
                           );
                         },
                         child: Text(
@@ -114,8 +100,16 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: () {
-                        // Добавить логику
+                      onPressed: () async {
+                        User? user = await _authService.signInWithEmail(
+                          _emailController.text,
+                          _passwordController.text,
+                        );
+                        if (user != null) {
+                          // Navigate to home page or other page
+                        } else {
+                          // Show error message
+                        }
                       },
                       child: Text(
                         'ВОЙТИ',
@@ -152,6 +146,19 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ],
+                    ),
+                    SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      icon: Icon(Icons.login),
+                      label: Text('Login with Google'),
+                      onPressed: () async {
+                        User? user = await _authService.signInWithGoogle();
+                        if (user != null) {
+                          // Navigate to home page or other page
+                        } else {
+                          // Show error message
+                        }
+                      },
                     ),
                   ],
                 ),
