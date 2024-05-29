@@ -1,17 +1,30 @@
-import 'package:anihub/firebase_options.dart';
 import 'package:anihub/generated/l10n.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:anihub/theme/theme_provider.dart';
 import 'package:anihub/pages/login_page.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: FirebaseOptions(apiKey: 'AIzaSyDFSPtzJLqCk-R7lojjRdqT523p9N7vkkE', appId: '1:15978137406:android:e47baf1974fc20b3aa8e6f', messagingSenderId: '15978137406', projectId: 'anihub-d83a6'),
-  );
+  
+  try {
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: 'AIzaSyDFSPtzJLqCk-R7lojjRdqT523p9N7vkkE',
+        appId: '1:15978137406:android:e47baf1974fc20b3aa8e6f',
+        messagingSenderId: '15978137406',
+        projectId: 'anihub-d83a6'
+      ),
+    );
+    print("Firebase initialized successfully");
+  } catch (e) {
+    print("Error initializing Firebase: $e");
+  }
 
   runApp(
     MultiProvider(
@@ -59,7 +72,64 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
+  @override
+  _MainPageState createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  late GoogleMapController _mapController;
+  LatLng _initialPosition = LatLng(0.0, 0.0);
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkPermissionAndGetLocation();
+  }
+
+  void _checkPermissionAndGetLocation() async {
+    if (await _handleLocationPermission()) {
+      await _getLocation();
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<bool> _handleLocationPermission() async {
+    var status = await Permission.location.status;
+    if (status.isGranted) {
+      return true;
+    } else if (status.isDenied) {
+      var result = await Permission.location.request();
+      return result.isGranted;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> _getLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      setState(() {
+        _initialPosition = LatLng(position.latitude, position.longitude);
+        _isLoading = false;
+      });
+      print("Location fetched successfully: $_initialPosition");
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      print("Error fetching location: $e");
+    }
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    _mapController = controller;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,18 +153,20 @@ class MainPage extends StatelessWidget {
         ],
       ),
       endDrawer: _buildEndDrawer(context),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildSectionTitle(context, S.of(context).hot),
-            _buildHotSection(),
-            _buildSectionTitle(context, S.of(context).whatsNew),
-            _buildWhatsNewSection(),
-            _buildSectionTitle(context, S.of(context).newReleases),
-            _buildNewReleasesSection(),
-          ],
-        ),
-      ),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildSectionTitle(context, S.of(context).hot),
+                  _buildHotSection(),
+                  _buildSectionTitle(context, S.of(context).whatsNew),
+                  _buildWhatsNewSection(),
+                  _buildSectionTitle(context, S.of(context).newReleases),
+                  _buildNewReleasesSection(),
+                ],
+              ),
+            ),
     );
   }
 
@@ -116,7 +188,7 @@ class MainPage extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  S.of(context).userProfileName,    //mock username for now (changes on language)
+                  S.of(context).userProfileName,
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ],
@@ -165,6 +237,41 @@ class MainPage extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          ListTile(
+            leading: Icon(Icons.map),
+            title: Text('Show Map'),
+            onTap: () {
+              Navigator.pop(context); // Close the drawer before showing the map
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  content: _isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : Container(
+                          height: 300,
+                          width: double.infinity,
+                          child: GoogleMap(
+                            onMapCreated: _onMapCreated,
+                            initialCameraPosition: CameraPosition(
+                              target: _initialPosition,
+                              zoom: 15.0,
+                            ),
+                            myLocationEnabled: true,
+                            myLocationButtonEnabled: true,
+                          ),
+                        ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Close'),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ],
       ),

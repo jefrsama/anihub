@@ -160,6 +160,32 @@ class _LoginPageState extends State<LoginPage> {
                         }
                       },
                     ),
+                    SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      icon: Icon(Icons.login),
+                      label: Text('Login with Twitter'),
+                      onPressed: () async {
+                        User? user = await _authService.signInWithTwitter();
+                        if (user != null) {
+                          // Navigate to home page or other page
+                        } else {
+                          // Show error message
+                        }
+                      },
+                    ),
+                    SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      icon: Icon(Icons.login),
+                      label: Text('Login with Github'),
+                      onPressed: () async {
+                        User? user = await _authService.signInWithGithub(context);
+                        if (user != null) {
+                          // Navigate to home page or other page
+                        } else {
+                          // Show error message
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),
