@@ -13,15 +13,19 @@ if (localPropertiesFile.exists()) {
     }
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: '1'
-def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '1.0'
-def compileSdkVersion = localProperties.getProperty('flutter.compileSdkVersion') ?: '31'
-def minSdkVersion = localProperties.getProperty('flutter.minSdkVersion') ?: '21'
-def targetSdkVersion = localProperties.getProperty('flutter.targetSdkVersion') ?: '31'
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1'
+}
 
 android {
-    compileSdkVersion compileSdkVersion.toInteger()
-    ndkVersion localProperties.getProperty('flutter.ndkVersion')
+    compileSdk flutter.compileSdkVersion
+    ndkVersion flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -38,8 +42,8 @@ android {
 
     defaultConfig {
         applicationId "com.example.anihub"
-        minSdkVersion minSdkVersion.toInteger()
-        targetSdkVersion targetSdkVersion.toInteger()
+        minSdkVersion 21
+        targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -60,5 +64,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.android.gms:play-services-auth:20.2.0'
     implementation 'com.google.firebase:firebase-core:20.1.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
+
