@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:twitter_login/twitter_login.dart';
-import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:github_sign_in_plus/github_sign_in_plus.dart';
 import 'package:flutter/material.dart';
 

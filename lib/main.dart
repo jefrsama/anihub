@@ -1,13 +1,11 @@
 import 'package:anihub/generated/l10n.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:anihub/theme/theme_provider.dart';
 import 'package:anihub/pages/login_page.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:anihub/pages/map_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,56 +76,15 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  late GoogleMapController _mapController;
-  LatLng _initialPosition = LatLng(0.0, 0.0);
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _checkPermissionAndGetLocation();
-  }
-
-  void _checkPermissionAndGetLocation() async {
-    if (await _handleLocationPermission()) {
-      await _getLocation();
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<bool> _handleLocationPermission() async {
-    var status = await Permission.location.status;
-    if (status.isGranted) {
-      return true;
-    } else if (status.isDenied) {
-      var result = await Permission.location.request();
-      return result.isGranted;
-    } else {
-      return false;
-    }
-  }
-
-  Future<void> _getLocation() async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      setState(() {
-        _initialPosition = LatLng(position.latitude, position.longitude);
-        _isLoading = false;
-      });
-      print("Location fetched successfully: $_initialPosition");
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      print("Error fetching location: $e");
-    }
-  }
-
-  void _onMapCreated(GoogleMapController controller) {
-    _mapController = controller;
+    // Removed map related initialization
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -171,112 +128,89 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget _buildEndDrawer(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
+  final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+  final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
 
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 40,
-                ),
-                SizedBox(height: 10),
-                Text(
-                  S.of(context).userProfileName,
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              ],
-            ),
+  return Drawer(
+    child: ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        DrawerHeader(
+          decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 40,
+              ),
+              SizedBox(height: 10),
+              Text(
+                S.of(context).userProfileName,
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+            ],
           ),
-          ListTile(
-            leading: Icon(Icons.login),
-            title: Text('Login'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
-              );
+        ),
+        ListTile(
+          leading: Icon(Icons.login),
+          title: Text('Login'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginPage()),
+            );
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.color_lens),
+          title: Text('Toggle Theme'),
+          onTap: () {
+            themeProvider.toggleTheme();
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.language),
+          title: Text('Change Language'),
+          trailing: DropdownButton<Locale>(
+            value: localeProvider.locale,
+            icon: Icon(Icons.arrow_drop_down),
+            onChanged: (Locale? newLocale) {
+              if (newLocale != null) {
+                localeProvider.setLocale(newLocale);
+              }
             },
+            items: [
+              DropdownMenuItem(
+                value: Locale('en'),
+                child: Text('English'),
+              ),
+              DropdownMenuItem(
+                value: Locale('ru'),
+                child: Text('Russian'),
+              ),
+              DropdownMenuItem(
+                value: Locale('kk'),
+                child: Text('Kazakh'),
+              ),
+            ],
           ),
-          ListTile(
-            leading: Icon(Icons.color_lens),
-            title: Text('Toggle Theme'),
-            onTap: () {
-              themeProvider.toggleTheme();
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.language),
-            title: Text('Change Language'),
-            trailing: DropdownButton<Locale>(
-              value: localeProvider.locale,
-              icon: Icon(Icons.arrow_drop_down),
-              onChanged: (Locale? newLocale) {
-                if (newLocale != null) {
-                  localeProvider.setLocale(newLocale);
-                }
-              },
-              items: [
-                DropdownMenuItem(
-                  value: Locale('en'),
-                  child: Text('English'),
-                ),
-                DropdownMenuItem(
-                  value: Locale('ru'),
-                  child: Text('Russian'),
-                ),
-                DropdownMenuItem(
-                  value: Locale('kk'),
-                  child: Text('Kazakh'),
-                ),
-              ],
-            ),
-          ),
-          ListTile(
-            leading: Icon(Icons.map),
-            title: Text('Show Map'),
-            onTap: () {
-              Navigator.pop(context); // Close the drawer before showing the map
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  content: _isLoading
-                      ? Center(child: CircularProgressIndicator())
-                      : Container(
-                          height: 300,
-                          width: double.infinity,
-                          child: GoogleMap(
-                            onMapCreated: _onMapCreated,
-                            initialCameraPosition: CameraPosition(
-                              target: _initialPosition,
-                              zoom: 15.0,
-                            ),
-                            myLocationEnabled: true,
-                            myLocationButtonEnabled: true,
-                          ),
-                        ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('Close'),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+        // Add the ListTile for navigating to the map page
+        ListTile(
+          leading: Icon(Icons.map),
+          title: Text('Show Map'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MapPage()),
+            );
+          },
+        ),
+      ],
+    ),
+  );
+}
+
 
   Widget _buildSectionTitle(BuildContext context, String title) {
     return Padding(
@@ -356,7 +290,7 @@ class _MainPageState extends State<MainPage> {
 
   Widget _buildNewReleasesSection() {
     return Container(
-      padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
           _buildCategoryChips(),
