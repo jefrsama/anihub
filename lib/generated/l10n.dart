@@ -89,6 +89,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Settings`
+  String get settings {
+    return Intl.message(
+      'Settings',
+      name: 'settings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Toggle Theme`
+  String get toggleTheme {
+    return Intl.message(
+      'Toggle Theme',
+      name: 'toggleTheme',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Language`
+  String get changeLanguage {
+    return Intl.message(
+      'Change Language',
+      name: 'changeLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Font Family`
+  String get changeFontFamily {
+    return Intl.message(
+      'Change Font Family',
+      name: 'changeFontFamily',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

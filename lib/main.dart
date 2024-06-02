@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:anihub/theme/theme_provider.dart';
 import 'package:anihub/pages/login_page.dart';
 import 'package:anihub/pages/map_page.dart';
+import 'package:anihub/pages/settings_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,7 +57,11 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Anime Hub',
-      theme: themeProvider.themeData,
+      theme: themeProvider.themeData.copyWith(
+        textTheme: ThemeData.light().textTheme.apply(
+              fontFamily: themeProvider.fontFamily,
+            ),
+      ),
       home: MainPage(),
       locale: localeProvider.locale,
       localizationsDelegates: const [
@@ -69,6 +74,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 
 class MainPage extends StatefulWidget {
   @override
@@ -195,7 +201,6 @@ class _MainPageState extends State<MainPage> {
             ],
           ),
         ),
-        // Add the ListTile for navigating to the map page
         ListTile(
           leading: Icon(Icons.map),
           title: Text('Show Map'),
@@ -206,10 +211,21 @@ class _MainPageState extends State<MainPage> {
             );
           },
         ),
+        ListTile(
+          leading: Icon(Icons.settings),
+          title: Text('Settings'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SettingsPage()),
+            );
+          },
+        ),
       ],
     ),
   );
 }
+
 
 
   Widget _buildSectionTitle(BuildContext context, String title) {

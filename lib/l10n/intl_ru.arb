@@ -2,5 +2,9 @@
   "hot": "ГОРЯЧЕЕ",
   "whatsNew": "ЧТО НОВОГО",
   "newReleases": "НОВЫЕ ВЫПУСКИ",
-  "userProfileName": "Пользователь"
+  "userProfileName": "Пользователь",
+  "settings": "Настройки",
+  "toggleTheme": "Смена Темы",
+  "changeLanguage": "Смена Языка",
+  "changeFontFamily": "Смена Шрифта"
 }
