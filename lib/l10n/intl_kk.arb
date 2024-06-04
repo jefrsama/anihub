@@ -2,5 +2,9 @@
   "hot": "ЫСТЫҚ",
   "whatsNew": "НЕ ЖАҢАЛЫҚ",
   "newReleases": "ЖАҢА ШЫҒАРЫЛЫМДАР",
-  "userProfileName": "Пайдаланушы"
+  "userProfileName": "Пайдаланушы",
+  "settings": "Параметрлер",
+  "toggleTheme": "Тақырыпты Өзгерту",
+  "changeLanguage": "Тілді Өзгерту",
+  "changeFontFamily": "Қаріпті Өзгерту"
 }

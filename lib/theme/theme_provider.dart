@@ -20,8 +20,12 @@ final ThemeData customTheme = ThemeData(
 
 class ThemeProvider with ChangeNotifier {
   ThemeData _themeData = lightTheme;
+  String _fontFamily = 'Roboto';
 
   ThemeData get themeData => _themeData;
+  String get fontFamily => _fontFamily;
+
+  bool get isDarkMode => _themeData == darkTheme;
 
   void setTheme(ThemeData theme) {
     _themeData = theme;
@@ -36,6 +40,10 @@ class ThemeProvider with ChangeNotifier {
     } else {
       _themeData = lightTheme;
     }
+    notifyListeners();
+  }
+  void setFontFamily(String family) {
+    _fontFamily = family;
     notifyListeners();
   }
 }

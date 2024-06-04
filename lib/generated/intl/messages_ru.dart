@@ -22,8 +22,13 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "changeFontFamily":
+            MessageLookupByLibrary.simpleMessage("Смена Шрифта"),
+        "changeLanguage": MessageLookupByLibrary.simpleMessage("Смена Языка"),
         "hot": MessageLookupByLibrary.simpleMessage("ГОРЯЧЕЕ"),
         "newReleases": MessageLookupByLibrary.simpleMessage("НОВЫЕ ВЫПУСКИ"),
+        "settings": MessageLookupByLibrary.simpleMessage("Настройки"),
+        "toggleTheme": MessageLookupByLibrary.simpleMessage("Смена Темы"),
         "userProfileName": MessageLookupByLibrary.simpleMessage("Пользователь"),
         "whatsNew": MessageLookupByLibrary.simpleMessage("ЧТО НОВОГО")
       };

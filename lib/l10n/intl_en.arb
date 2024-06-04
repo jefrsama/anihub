@@ -2,5 +2,9 @@
   "hot": "HOT",
   "whatsNew": "WHATS NEW",
   "newReleases": "NEW RELEASES",
-  "userProfileName": "User"
+  "userProfileName": "User",
+  "settings": "Settings",
+  "toggleTheme": "Toggle Theme",
+  "changeLanguage": "Change Language",
+  "changeFontFamily": "Change Font Family"
 }

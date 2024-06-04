@@ -22,9 +22,15 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "changeFontFamily":
+            MessageLookupByLibrary.simpleMessage("Қаріпті Өзгерту"),
+        "changeLanguage": MessageLookupByLibrary.simpleMessage("Тілді Өзгерту"),
         "hot": MessageLookupByLibrary.simpleMessage("ЫСТЫҚ"),
         "newReleases":
             MessageLookupByLibrary.simpleMessage("ЖАҢА ШЫҒАРЫЛЫМДАР"),
+        "settings": MessageLookupByLibrary.simpleMessage("Параметрлер"),
+        "toggleTheme":
+            MessageLookupByLibrary.simpleMessage("Тақырыпты Өзгерту"),
         "userProfileName": MessageLookupByLibrary.simpleMessage("Пайдаланушы"),
         "whatsNew": MessageLookupByLibrary.simpleMessage("НЕ ЖАҢАЛЫҚ")
       };
