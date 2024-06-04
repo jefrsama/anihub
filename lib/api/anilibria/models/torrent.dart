@@ -1,7 +1,4 @@
-import 'dart:ffi';
-
 import 'quality.dart';
-
 import 'episodes.dart';
 
 class Torrent {

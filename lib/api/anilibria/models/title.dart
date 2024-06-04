@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'names.dart';
 import 'franchise.dart';
 import 'posters.dart';
