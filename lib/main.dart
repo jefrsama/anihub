@@ -7,6 +7,7 @@ import 'package:anihub/theme/theme_provider.dart';
 import 'package:anihub/pages/login_page.dart';
 import 'package:anihub/pages/map_page.dart';
 import 'package:anihub/pages/settings_page.dart';
+import 'package:anihub/pages/profile_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -146,12 +147,20 @@ class _MainPageState extends State<MainPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 40,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfilePage()), // Profile Page
+                  );
+                },
+                child: CircleAvatar(
+                  radius: 40,
+                ),
               ),
               SizedBox(height: 10),
               Text(
-                S.of(context).userProfileName,
+                S.of(context).userProfileName, // user profile name
                 style: TextStyle(color: Colors.white, fontSize: 18),
               ),
             ],
